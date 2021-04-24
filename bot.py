@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord_slash import SlashCommand
 
-with open("bot_token.txt", "r") as token_file:
+with open("secret/bot_token.txt", "r") as token_file:
     TOKEN = token_file.read()
 
 intents = discord.Intents().all()
