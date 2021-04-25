@@ -1,4 +1,4 @@
-from scryfall import get_card
+from scryfall import get_card, Card
 
 
 class BoosterPack:
@@ -12,24 +12,14 @@ class BoosterPack:
             parameter = parameter.lower()
             booster_list = []
             for card in self.cards:
-                booster_list.append(card[parameter])
+                booster_list.append(card.get_info()[parameter])
             return booster_list
 
-    def add_card(self, card: str or list):
-        if type(card) == str:
-            self.cards.append(get_card(name=card))
-        elif type(card) == list:
-            self.cards.append(card)
+    def add_card(self, card: Card):
+        self.cards.append(Card)
 
-    def remove_card(self, card: str or list):
-        i = 0
-        while i < len(self.cards):
-            if (type(card) == str and self.cards[i]["name"] == card) or (
-                    type(card) == list and self.cards[i] == list):
-                del self.cards[i]
-                return True
-            else:
-                i = i + 1
+    def remove_card(self, index: int):
+        del self.cards[index]
 
 
 def generate_booster(set_id: str):

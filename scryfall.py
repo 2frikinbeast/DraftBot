@@ -29,7 +29,15 @@ class UnrefinedSearch(Exception):
     pass
 
 
-def get_card(name: str, exact_name: bool = False, return_dict: bool = True):
+class Card:
+    def __init__(self, info: dict):
+        self.info = info
+
+    def get_info(self):
+        return self.info
+
+
+def get_card(name: str, exact_name: bool = False):
     name = name.lower().replace(" ", "+")
     if exact_name:
         response = api_get(url=SCRYFALL_API + "/cards/named?fuzzy=" + name, response_type="text")
@@ -37,44 +45,30 @@ def get_card(name: str, exact_name: bool = False, return_dict: bool = True):
         response = api_get(url=SCRYFALL_API + "/cards/named?fuzzy=" + name, response_type="text")
         if json.loads(response)["object"] == "error":
             raise UnrefinedSearch
-    if return_dict:
-        return json.loads(response)
-    else:
-        return response
+    return Card(info=json.loads(response))
 
 
-def get_card_image(name: str, exact_name: bool = False, return_url: bool = False, image_type: str = "png",
+def get_card_image(card: Card, return_url: bool = False, image_type: str = "png",
                    front_face: bool = True):
-    """
-
-    :param name: name of card
-    :param exact_name: if True, requires the card name to be spelled correctly
-    :param return_url: If True, returns the card art as an image url (string), else returns as Image
-    :param image_type:
-    :param front_face:
-    :return: URL string if return_url is True, Image otherwise
-    """
     image_type = image_type.replace(" ", "_")
     valid_image_types = ["png", "border_crop", "art_crop", "large", "normal", "small"]
     if image_type not in valid_image_types:
         raise ValueError("get_card_image: response_type must be one of %r." % valid_image_types)
     else:
         try:
-            url = get_card(name=name, exact_name=exact_name, return_dict=True)["image_uris"][image_type]
+            url = card.get_info()["image_uris"][image_type]
             if return_url:
                 return url
             else:
                 return Image.open(
-                    requests.get(get_card(name=name, exact_name=exact_name, return_dict=True)["image_uris"][image_type],
+                    requests.get(card.get_info()["image_uris"][image_type],
                                  stream=True).raw)
         except KeyError:
-            url = get_card(name=name, exact_name=exact_name, return_dict=True)["card_faces"][int(not front_face)][
+            url = card.get_info()["card_faces"][int(not front_face)][
                 "image_uris"][image_type]
             if return_url:
                 return url
             else:
                 return Image.open(
-                    requests.get(
-                        get_card(name=name, exact_name=exact_name, return_dict=True)["card_faces"][int(not front_face)][
-                            "image_uris"][image_type],
-                        stream=True).raw)
+                    requests.get(card.get_info()["card_faces"][int(not front_face)]["image_uris"][image_type],
+                                 stream=True).raw)
