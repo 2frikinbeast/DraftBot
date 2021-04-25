@@ -24,7 +24,7 @@ class BoosterPack:
         for card in self.contents:
             img = get_card_image(card)
             card_images.append(img)
-            time.sleep(0.03) #avoid sending API calls too quickly
+            time.sleep(0.03)  # avoid sending API calls too quickly
         return grid(imgs=card_images, cols=cols)
 
 
@@ -42,7 +42,9 @@ def get_random_card(set_list: list, rarity: str = "any", cards_already_chosen: l
 
 
 def get_random_basic(set_id: str):
-    return Card(json.loads(api_get("https://api.scryfall.com/cards/random?q=is%3Abooster+t%3Abasic+unique%3Aart+e%3A" + set_id.lower(), response_type="text")))
+    return Card(json.loads(
+        api_get("https://api.scryfall.com/cards/random?q=is%3Abooster+t%3Abasic+unique%3Aart+e%3A" + set_id.lower(),
+                response_type="text")))
 
 
 def generate_booster(set_id: str):
@@ -85,6 +87,3 @@ def generate_booster(set_id: str):
         for i in range(basics):
             cards.append(get_random_basic(set_id=set_id))
     return BoosterPack(contents=cards)
-
-test_booster = generate_booster("m21")
-test_booster.gen_image().save("booster.png")
