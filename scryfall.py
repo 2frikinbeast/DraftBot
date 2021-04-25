@@ -36,11 +36,14 @@ class Card:
     def get_info(self):
         return self.info
 
+    def get_param(self, param: str):
+        return self.info[param]
+
 
 def get_card(name: str, exact_name: bool = False):
     name = name.lower().replace(" ", "+")
     if exact_name:
-        response = api_get(url=SCRYFALL_API + "/cards/named?fuzzy=" + name, response_type="text")
+        response = api_get(url=SCRYFALL_API + "/cards/named?exact=" + name, response_type="text")
     else:
         response = api_get(url=SCRYFALL_API + "/cards/named?fuzzy=" + name, response_type="text")
         if json.loads(response)["object"] == "error":

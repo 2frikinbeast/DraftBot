@@ -3,23 +3,16 @@ from scryfall import get_card, Card
 
 class BoosterPack:
     def __init__(self, contents: list):
-        self.cards = contents
+        self.contents = contents
 
-    def get_cards(self, parameter: str = None):
-        if parameter is None:
-            return self.cards
-        else:
-            parameter = parameter.lower()
-            booster_list = []
-            for card in self.cards:
-                booster_list.append(card.get_info()[parameter])
-            return booster_list
+    def get_cards(self):
+        return self.contents
 
     def add_card(self, card: Card):
-        self.cards.append(Card)
+        self.contents.append(card)
 
     def remove_card(self, index: int):
-        del self.cards[index]
+        del self.contents[int(index)]
 
 
 def generate_booster(set_id: str):
